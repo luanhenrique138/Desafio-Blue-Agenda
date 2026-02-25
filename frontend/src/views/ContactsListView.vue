@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { ContactsService } from "@/services/contacts.service";
 import type { Contact, CreateContactRequest } from "@/types/contacts";
 import ContactsTable from "@/components/contacts/ContactsTable.vue"
 import ConfirmDeleteDialog from "@/components/contacts/ConfirmDeleteDialog.vue"
 import ContactFormDialog from "@/components/contacts/ContactFormDialog.vue"
+import ContactSearchBar from "@/components/contacts/ContactSearchBar.vue";
 
 const contacts = ref<Contact[]>([])
 
@@ -20,12 +21,21 @@ const error = ref<string | null>(null)
 const deleting = ref(false)
 const selectContact = ref<Contact | null>(null);
 
+const search = ref<string>("");
+const loadingContacts = ref(false)
+
+
 async function loadContacts() {
   try {
+    loadingContacts.value = true
     error.value = null
-    contacts.value = await ContactsService.getAllContacts()
+    const result = await ContactsService.getAllContacts()
+    contacts.value = Array.isArray(result) ? result : []
   } catch (e) {
+    contacts.value = []
     error.value = "Falha ao carregar contatos."
+  } finally {
+    loadingContacts.value = false
   }
 }
 
@@ -94,6 +104,21 @@ async function handleSave(payload: CreateContactRequest) {
   }
 }
 
+const filteredContacts = computed(()=>{
+  const q = search.value.trim().toLowerCase()
+  
+  if(!q) return contacts.value
+
+  
+  return contacts.value.filter((c) => {
+    return (
+      c.name.toLowerCase().includes(q) ||
+      c.email.toLowerCase().includes(q) ||
+      c.phone.toLowerCase().includes(q)
+    )
+  })
+})
+
 onMounted(loadContacts)
 
 </script>
@@ -102,21 +127,29 @@ onMounted(loadContacts)
   <v-container>
     <v-card>
       <v-card-title class="d-flex align-center justify-space-between">
-            <v-card-title>Contatos</v-card-title>
-            <v-btn
-              color="primary"
-              prepend-icon="mdi-plus"
-              @click="openCreateDialog"
-            >
-              Adicionar
-            </v-btn>
+            <span>Contatos</span>
+            
+            <div class="d-flex align-center ga-3">
+              <ContactSearchBar v-model="search" class="flex-grow-1 mr-3" />
+
+              <v-btn
+                color="primary"
+                prepend-icon="mdi-plus"
+                class="btn-add"
+                @click="openCreateDialog"
+              >
+                Adicionar
+              </v-btn>
+            </div>
       </v-card-title>
 
       <v-card-text>
         <ContactsTable
-          :contacts="contacts"
+          :contacts="filteredContacts"
           @edit="openEditDialog"
           @delete="openDeleteDialog"
+          :error="error"
+          :loading="loadingContacts"
         />
       </v-card-text>
     </v-card>

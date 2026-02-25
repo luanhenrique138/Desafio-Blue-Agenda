@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { Contact } from "@/types/contacts"
 
-defineProps<{
+const props = defineProps<{
   contacts: Contact[]
+  loading?: boolean
+  error?: string | null
 }>()
 
 const emit = defineEmits<{
@@ -12,6 +14,13 @@ const emit = defineEmits<{
 </script>
 
 <template>
+  <v-alert
+    v-if="props.error"
+    type="error"
+    variant="tonal"
+    class="mb-3"
+    :text="props.error"
+  />
   <v-table>
     <thead>
       <tr>
@@ -23,7 +32,20 @@ const emit = defineEmits<{
     </thead>
 
     <tbody>
-      <tr v-for="c in contacts" :key="c.id">
+      
+      <tr v-if="props.loading">
+        <td colspan="4">
+          <v-skeleton-loader type="table-row@6" />
+        </td>
+      </tr>
+
+      <tr v-else-if="!props.contacts.length">
+        <td colspan="4" class="text-center text-medium-emphasis py-6">
+          Nenhum contato cadastrado
+        </td>
+      </tr>
+
+      <tr v-else v-for="c in contacts" :key="c.id">
         <td>{{ c.name }}</td>
         <td>{{ c.email }}</td>
         <td>{{ c.phone }}</td>
