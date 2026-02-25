@@ -1,11 +1,18 @@
 import type { Contact, CreateContactRequest, UpdateContactRequest } from '@/types/contacts';
 import { http } from './http';
+import type { PagedResult } from '@/types/paged';
 
 export const ContactsService = {
-    async getAllContacts(search?: string): Promise<Contact[]> {
-        const { data } = await http.get<Contact[]>('/Contacts', {
-            params: search ? { search } : {}
+    async getAllContacts(params?: {search?: string, page?: number, pageSize?:number}): Promise<PagedResult<Contact>> {
+        const { data } = await http.get<PagedResult<Contact>>('/Contacts', {
+            params: {
+                search: params?.search ?? undefined,
+                page: params?.page ?? 1,
+                pageSize: params?.pageSize ?? 10,
+                // search ? { search } : {}
+            }
         })
+
         return data;
     },
 
