@@ -7,6 +7,20 @@ const props = defineProps<{
   error?: string | null
 }>()
 
+const formatPhone = (phone: string) => {
+  if (!phone) return "";
+  
+  const digits = phone.replace(/\D/g, "");
+
+  if (digits.length === 11) {
+    return digits.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+  } else if (digits.length === 10) {
+    return digits.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+  }
+
+  return digits;
+};
+
 const emit = defineEmits<{
   (e: "edit", contact: Contact): void
   (e: "delete", contact: Contact): void
@@ -48,7 +62,7 @@ const emit = defineEmits<{
       <tr v-else v-for="c in contacts" :key="c.id">
         <td>{{ c.name }}</td>
         <td>{{ c.email }}</td>
-        <td>{{ c.phone }}</td>
+        <td>{{ formatPhone(c.phone) }}</td>
 
         <td class="text-right">
           <v-tooltip text="Editar" location="top">

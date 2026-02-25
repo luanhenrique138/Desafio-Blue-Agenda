@@ -7,6 +7,16 @@ import router from './router'
 import { vuetify } from './plugins/vuetify';
 import '@mdi/font/css/materialdesignicons.css';
 
+import {createVuetify} from 'vuetify';
+
+import { VMaskInput } from 'vuetify/labs/VMaskInput'
+
+export default createVuetify({
+  components: {
+    VMaskInput,
+  },
+})
+
 const app = createApp(App)
 
 app.use(createPinia())

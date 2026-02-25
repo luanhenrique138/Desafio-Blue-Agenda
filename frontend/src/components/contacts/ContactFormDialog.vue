@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, watch } from "vue"
 import type { Contact, CreateContactRequest } from "@/types/contacts"
+import {VMaskInput} from 'vuetify/labs/VMaskInput';
 
 const props = defineProps<{
   modelValue: boolean
@@ -45,11 +46,15 @@ function close() {
   emit("cancel")
 }
 
+function onlyDigits(v: string) {
+  return (v ?? "").replace(/\D/g, "")
+}
+
 function submit() {
   emit("save", {
     name: form.name.trim(),
     email: form.email.trim(),
-    phone: form.phone.trim(),
+    phone: onlyDigits(form.phone),
   })
 }
 
@@ -58,8 +63,24 @@ const rules = {
   required: (v: string) => (!!v && v.trim().length > 0) || "Campo obrigatório",
   email: (v: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || "Email inválido",
-  minPhone: (v: string) => v.replace(/\D/g, "").length >= 8 || "Telefone inválido",
+  minPhone: (v: string) => {
+    const len = (v ?? "").replace(/\D/g, "").length;
+    if (len === 0) return true;
+    return (len === 10 || len === 11) || "Telefone Invalido";
+  },
 }
+
+const phoneMask = computed(() => {
+  const digits = (form.phone ?? "").replace(/\D/g, "");
+  
+  if (digits.length > 10) {
+    return "(##) #####-####";
+  }
+  
+  return "(##) ####-####" + (digits.length === 10 ? "#" : "");
+});
+
+
 </script>
 
 <template>
@@ -72,7 +93,7 @@ const rules = {
           <v-text-field
             v-model="form.name"
             label="Nome"
-            variant="outlined"
+            variant="underlined"
             density="comfortable"
             :rules="[rules.required]"
           />
@@ -81,15 +102,18 @@ const rules = {
             v-model="form.email"
             label="Email"
             type="email"
-            variant="outlined"
+            variant="underlined"
             density="comfortable"
             :rules="[rules.required, rules.email]"
           />
 
-          <v-text-field
+          <v-mask-input
             v-model="form.phone"
+            :mask="phoneMask"
+            
+            
             label="Telefone"
-            variant="outlined"
+            variant="underlined"
             density="comfortable"
             :rules="[rules.required, rules.minPhone]"
           />
