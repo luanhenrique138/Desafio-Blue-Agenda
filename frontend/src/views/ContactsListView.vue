@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { ContactsService } from "@/services/contacts.service";
 import type { Contact, CreateContactRequest } from "@/types/contacts";
 import ContactsTable from "@/components/contacts/ContactsTable.vue"
@@ -25,15 +25,20 @@ const search = ref<string>("");
 const loadingContacts = ref(false)
 
 
-async function loadContacts() {
+async function fetchContacts (search?: string) {
   try {
     loadingContacts.value = true
     error.value = null
-    const result = await ContactsService.getAllContacts()
+
+    const result = await ContactsService.getAllContacts(search)
     contacts.value = Array.isArray(result) ? result : []
-  } catch (e) {
+
+
+  } catch {
+
     contacts.value = []
-    error.value = "Falha ao carregar contatos."
+    error.value= "Falha ao carregar contatos."
+
   } finally {
     loadingContacts.value = false
   }
@@ -51,7 +56,7 @@ function closeDeleteDialog(){
 
 async function onDelete(contact: Contact) {
     await ContactsService.deleteContact(contact.id)
-    loadContacts()
+    fetchContacts()
 }
 
 async function confirmDelete() {
@@ -96,7 +101,7 @@ async function handleSave(payload: CreateContactRequest) {
     }
 
     formDialog.value = false
-    await loadContacts()
+    await fetchContacts()
   } catch (e) {
     formError.value = "Falha ao salvar contato."
   } finally {
@@ -104,22 +109,18 @@ async function handleSave(payload: CreateContactRequest) {
   }
 }
 
-const filteredContacts = computed(()=>{
-  const q = search.value.trim().toLowerCase()
-  
-  if(!q) return contacts.value
 
-  
-  return contacts.value.filter((c) => {
-    return (
-      c.name.toLowerCase().includes(q) ||
-      c.email.toLowerCase().includes(q) ||
-      c.phone.toLowerCase().includes(q)
-    )
-  })
+let t: number | undefined
+
+//debounce
+watch(search, (newValue) => {
+  window.clearTimeout(t)
+  t = window.setTimeout(() => {
+    fetchContacts(newValue)
+  }, 350)
 })
 
-onMounted(loadContacts)
+onMounted(()=>fetchContacts())
 
 </script>
 
@@ -145,7 +146,7 @@ onMounted(loadContacts)
 
       <v-card-text>
         <ContactsTable
-          :contacts="filteredContacts"
+          :contacts="contacts"
           @edit="openEditDialog"
           @delete="openDeleteDialog"
           :error="error"
@@ -173,91 +174,3 @@ onMounted(loadContacts)
     />
   </v-container>
 </template>
-
-<!-- <template>
-  <v-container>
-    <v-card>
-      <v-card-title>
-        Contatos
-      </v-card-title>
-
-      <v-card-text>
-        <v-table>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Email</th>
-              <th>Telefone</th>
-              <th class="text-right">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="c in contacts" :key="c.id">
-                <td>{{ c.name }}</td>
-                <td>{{ c.email }}</td>
-                <td>{{ c.phone }}</td>
-                <td class="text-right">
-                <v-tooltip text="Editar" location="top">
-                    <template #activator="{ props }">
-                    <v-btn
-                        v-bind="props"
-                        icon="mdi-pencil"
-                        variant="text"
-                        @click="onEdit(c)"
-                    />
-                    </template>
-                </v-tooltip>
-
-                <v-tooltip text="Excluir" location="top">
-                    <template #activator="{ props }">
-                    <v-btn
-                        v-bind="props"
-                        icon="mdi-delete"
-                        variant="text"
-                        @click="openDeleteDialog(c)"
-                    />
-                    </template>
-                </v-tooltip>
-                </td>
-            </tr>
-          </tbody>
-        </v-table>
-      </v-card-text>
-    </v-card>
-    
-    <v-dialog v-model="deleteDialog" max-width="480">
-        <v-card>
-            <v-card-title>Confirmar exclusão</v-card-title>
-
-            <v-card-text>
-                Tem certeza que deseja excluir o contato
-                <strong>{{ selectContact?.name }}</strong>?
-                <div class="text-caption text-medium-emphasis mt-2">
-                    Essa ação não pode ser desfeita.
-                </div>
-
-                <v-alert
-                    v-if="error"
-                    type="error"
-                    variant="tonal"
-                    class="mt-3"
-                    :text="error"
-                />
-            </v-card-text>
-
-            <v-card-actions>
-                <v-spacer />
-                <v-btn variant="text" @click="closeDeleteDialog" :disabled="deleting">
-                    Cancelar
-                </v-btn>
-                <v-btn color="red" @click="confirmDelete" :loading="deleting">
-                    Excluir
-                </v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
-    
-  </v-container>
-</template> -->
-
-

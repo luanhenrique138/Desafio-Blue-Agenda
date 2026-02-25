@@ -2,8 +2,10 @@ import type { Contact, CreateContactRequest, UpdateContactRequest } from '@/type
 import { http } from './http';
 
 export const ContactsService = {
-    async getAllContacts(): Promise<Contact[]> {
-        const { data } = await http.get<Contact[]>('/Contacts')
+    async getAllContacts(search?: string): Promise<Contact[]> {
+        const { data } = await http.get<Contact[]>('/Contacts', {
+            params: search ? { search } : {}
+        })
         return data;
     },
 
