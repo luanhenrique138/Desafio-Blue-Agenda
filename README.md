@@ -10,7 +10,7 @@ Sistema completo de gerenciamento de contatos com CRUD, busca e paginação serv
 - .NET 8
 - ASP.NET Core Web API
 - Entity Framework Core
-- SQL Server
+- PostgreSQL
 - Repository Pattern
 - DTO Pattern
 - Paginação server-side
@@ -39,8 +39,7 @@ Sistema completo de gerenciamento de contatos com CRUD, busca e paginação serv
 ---
 
 # 🐳 Como rodar o projeto com Docker + Docker Compose
-
-> Este modo sobe **PostgreSQL + API (.NET) + Front (Vue) + Nginx** com um comando.
+> Este modo sobe automaticamente o **PostgreSQL + API (.NET) + Front (Vue) + Nginx** com um comando.
 
 ## 1- Ir para a pasta `infra`
 No Windows PowerShell:
@@ -243,7 +242,7 @@ Altera as informações de um contato existente.
   "phone": "81988888888"
 }
 ```
-#### 🔹 Resposta (204 No Content)
+#### 🔹 Resposta (200 OK)
 ```json
 {
   "id": "f30aba7f-3619-49a4-a2f0-55b7771207b7",
@@ -262,3 +261,6 @@ Remove um contato definitivamente.
 * **Método:** `DELETE`
 
 #### 🔹 Resposta (204 No Content)
+
+
+Desenvolvido por Luan Henrique 🚀
