@@ -40,10 +40,27 @@ namespace Agenda.Infrastructure.Repositories
             return await _context.Contacts.AnyAsync(x => x.Email == email);
         }
 
-        public async Task<List<Contact>> GetAllAsync()
+        public async Task<List<Contact>> GetAllAsync(string? search = null)
         {
-            return await _context.Contacts
+            var query = _context.Contacts
                 .AsNoTracking()
+                .AsQueryable();
+                //.OrderBy(c => c.Name)
+                //.ToListAsync();
+
+            if(!string.IsNullOrWhiteSpace(search))
+            {
+                var normalizeSearch = search.Trim().ToLower();
+
+                query = query.Where(c =>
+                    c.Name.ToLower().Contains(normalizeSearch) ||
+                    c.Email.ToLower().Contains(normalizeSearch) ||
+                    c.Phone.ToLower().Contains(normalizeSearch)
+                );
+
+            };
+
+            return await query
                 .OrderBy(c => c.Name)
                 .ToListAsync();
         }

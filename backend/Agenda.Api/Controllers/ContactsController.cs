@@ -86,9 +86,9 @@ namespace Agenda.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ContactResponse>>> GetContacts()
+        public async Task<ActionResult<List<ContactResponse>>> GetContacts([FromQuery] string? search)
         {
-            var result = await _contactService.GetAllAsync();
+            var result = await _contactService.GetAllAsync(search);
             return Ok(result);
         }
     }

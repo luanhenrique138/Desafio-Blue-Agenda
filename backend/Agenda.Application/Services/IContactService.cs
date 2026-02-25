@@ -10,7 +10,7 @@ namespace Agenda.Application.Services
 {
     public interface IContactService
     {
-        Task<List<ContactResponse>> GetAllAsync();
+        Task<List<ContactResponse>> GetAllAsync(string? search = null);
         Task<ContactResponse?> GetByIdAsync(Guid id);
         Task<ContactResponse> CreateAsync(CreateContactRequest request);
         Task<ContactResponse?> UpdateAsync(Guid id,UpdateContactRequest request);

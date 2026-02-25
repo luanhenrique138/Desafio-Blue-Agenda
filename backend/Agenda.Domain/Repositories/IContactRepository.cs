@@ -9,7 +9,7 @@ namespace Agenda.Domain.Repositories
 {
     public interface IContactRepository
     {
-        Task<List<Contact>> GetAllAsync();
+        Task<List<Contact>> GetAllAsync(string? search = null);
         Task<Contact> AddAsync (Contact contact);
         Task<Contact?> GetByIdAsync(Guid id);
         Task<Contact> UpdateAsync(Contact contact);

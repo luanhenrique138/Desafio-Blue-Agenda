@@ -34,7 +34,7 @@ namespace Agenda.Domain.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<Contact>> GetAllAsync()
+        public Task<List<Contact>> GetAllAsync(string? search = null)
         {
             throw new NotImplementedException();
         }

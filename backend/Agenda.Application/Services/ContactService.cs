@@ -50,9 +50,9 @@ namespace Agenda.Application.Services
             
         }
 
-        public async Task<List<ContactResponse>> GetAllAsync()
+        public async Task<List<ContactResponse>> GetAllAsync(string? search = null)
         {
-            var listContacts = await _contactRepository.GetAllAsync();
+            var listContacts = await _contactRepository.GetAllAsync(search);
    
             return _mapper.Map<List<ContactResponse>>(listContacts);
         }
