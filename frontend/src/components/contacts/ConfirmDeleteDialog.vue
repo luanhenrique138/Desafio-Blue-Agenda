@@ -22,7 +22,7 @@ function close() {
 
 <template>
   <v-dialog :model-value="modelValue" max-width="480" @update:modelValue="emit('update:modelValue', $event)">
-    <v-card>
+    <v-card class="pa-5">
       <v-card-title>Confirmar exclusão</v-card-title>
 
       <v-card-text>

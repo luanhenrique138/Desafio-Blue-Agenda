@@ -130,8 +130,8 @@ async function handleSave(payload: CreateContactRequest) {
 <template>
   <v-container>
     <v-card>
-      <v-card-title class="d-flex align-center justify-space-between">
-        <span>Contatos</span>
+      <v-card-title class="d-flex align-center justify-space-between pa-5">
+        <span>Agenda</span>
 
         <div class="d-flex align-center ga-3">
           <ContactSearchBar v-model="search" class="flex-grow-1 mr-3" />
@@ -153,7 +153,7 @@ async function handleSave(payload: CreateContactRequest) {
 
         <div class="d-flex align-center justify-space-between mt-4">
           <div class="text-caption text-medium-emphasis">
-            Total: {{ totalItems }}
+            Total de contatos: {{ totalItems }}
           </div>
 
           <div class="d-flex align-center ga-3">

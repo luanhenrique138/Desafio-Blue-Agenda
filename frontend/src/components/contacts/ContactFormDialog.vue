@@ -85,7 +85,7 @@ const phoneMask = computed(() => {
 
 <template>
   <v-dialog v-model="isOpen" max-width="520">
-    <v-card>
+    <v-card class="pa-5">
       <v-card-title>{{ title }}</v-card-title>
 
       <v-card-text>
