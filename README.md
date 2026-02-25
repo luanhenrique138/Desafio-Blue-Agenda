@@ -102,6 +102,27 @@ cd backend
 }
 ```
 
+---
+
+## 🗄️ Migrations e Banco de Dados
+
+O projeto utiliza o **Entity Framework Core** (Approach Code-First). Para gerenciar o esquema do banco de dados localmente, siga os comandos abaixo:
+
+### 1. Requisito
+Certifique-se de ter a ferramenta `dotnet-ef` instalada:
+```bash
+dotnet tool install --global dotnet-ef
+```
+### 2. Aplicar Migrations
+Para criar as tabelas no seu banco de dados local (conforme a connection string configurada):
+
+```bash
+dotnet ef database update --project Agenda.Api
+```
+
+[!NOTE]
+Se você estiver utilizando o Docker Compose, as migrations são executadas automaticamente pelo container da API durante o startup, não sendo necessário rodar os comandos acima manualmente.
+
 ## Rode a Api
 
 ```bash
