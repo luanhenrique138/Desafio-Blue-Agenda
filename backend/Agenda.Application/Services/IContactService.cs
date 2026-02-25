@@ -1,5 +1,6 @@
 ﻿using Agenda.Application.DTOs.Requests;
 using Agenda.Application.DTOs.Responses;
+using Agenda.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace Agenda.Application.Services
 {
     public interface IContactService
     {
-        Task<List<ContactResponse>> GetAllAsync(string? search = null);
+        Task<PagedResult<ContactResponse>> GetAllAsync(string? search = null, int page = 1, int pageSize = 10);
         Task<ContactResponse?> GetByIdAsync(Guid id);
         Task<ContactResponse> CreateAsync(CreateContactRequest request);
         Task<ContactResponse?> UpdateAsync(Guid id,UpdateContactRequest request);

@@ -34,7 +34,7 @@ namespace Agenda.Domain.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<Contact>> GetAllAsync(string? search = null)
+        public Task<List<Contact>> GetPagedAsync(string? search = null, int page = 10 , int pageSize = 10)
         {
             throw new NotImplementedException();
         }
@@ -55,6 +55,11 @@ namespace Agenda.Domain.Repositories
 
             return Task.FromResult(contact);
 
+        }
+
+        Task<(List<Contact> Items, int TotalItems)> IContactRepository.GetPagedAsync(string? search, int page, int pageSize)
+        {
+            throw new NotImplementedException();
         }
     }
 }

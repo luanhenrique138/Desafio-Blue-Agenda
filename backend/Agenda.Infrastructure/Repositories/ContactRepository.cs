@@ -65,6 +65,35 @@ namespace Agenda.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<(List<Contact> Items, int TotalItems)> GetPagedAsync(string? search, int page, int pageSize)
+        {
+            page = page < 1 ? 1 : page;
+            pageSize = pageSize < 1 ? 10 : pageSize;
+            pageSize = Math.Min(pageSize, 100);
+
+            var query = _context.Contacts.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var like = $"%{search.Trim()}%";
+                query = query.Where(c =>
+                    EF.Functions.Like(c.Name, like) ||
+                    EF.Functions.Like(c.Email, like) ||
+                    EF.Functions.Like(c.Phone, like)
+                );
+            }
+
+            var totalItems = await query.CountAsync();
+
+            var items = await query
+                .OrderBy(c => c.Name)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalItems);
+        }
+
         public async Task<Contact?> GetByIdAsync(Guid id)
         {
             var entity = await _context.Contacts.FirstOrDefaultAsync(x => x.Id == id);

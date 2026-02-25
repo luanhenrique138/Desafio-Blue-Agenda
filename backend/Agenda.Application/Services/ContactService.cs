@@ -50,11 +50,26 @@ namespace Agenda.Application.Services
             
         }
 
-        public async Task<List<ContactResponse>> GetAllAsync(string? search = null)
+        public async Task<PagedResult<ContactResponse>> GetAllAsync(string? search = null, int page = 1, int pageSize = 10)
         {
-            var listContacts = await _contactRepository.GetAllAsync(search);
-   
-            return _mapper.Map<List<ContactResponse>>(listContacts);
+
+            page = page < 1 ? 1 : page;
+            pageSize = pageSize < 1 ? 10 : pageSize;
+            pageSize = Math.Min(pageSize, 100);
+
+            var (items, totalItems) = await _contactRepository.GetPagedAsync(search, page, pageSize);
+
+            var mapped = items.Select(_mapper.Map<ContactResponse>).ToList();
+
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            return new PagedResult<ContactResponse>(
+                Items: mapped,
+                Page: page,
+                PageSize: pageSize,
+                TotalItems: totalItems,
+                Totalpages: totalPages
+            );
         }
 
         public async Task<ContactResponse?> GetByIdAsync(Guid id)

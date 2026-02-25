@@ -86,9 +86,17 @@ namespace Agenda.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ContactResponse>>> GetContacts([FromQuery] string? search)
+        public async Task<ActionResult<PagedResult<ContactResponse>>> GetContacts(
+            [FromQuery] string? search,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
-            var result = await _contactService.GetAllAsync(search);
+
+            page = page < 1 ? 1 : page;
+            pageSize = pageSize < 1 ? 10 : pageSize;
+            pageSize = Math.Min(pageSize, 100);
+
+            var result = await _contactService.GetAllAsync(search, page, pageSize);
             return Ok(result);
         }
     }
