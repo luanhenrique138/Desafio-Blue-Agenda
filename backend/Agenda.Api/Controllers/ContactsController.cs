@@ -99,5 +99,7 @@ namespace Agenda.Api.Controllers
             var result = await _contactService.GetAllAsync(search, page, pageSize);
             return Ok(result);
         }
+
+
     }
 }

@@ -11,6 +11,9 @@ using static Agenda.Application.Services.ContactService;
 using AutoMapper;
 using Agenda.Application.Mapping;
 
+using Agenda.Infrastructure.Email; // onde ficará EmailSettings e SmtpEmailSenderService
+using Agenda.Api.Workers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -23,6 +26,11 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateContactRequestValidator>();
 builder.Services.AddScoped<IContactService, ContactService>();
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
+
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+builder.Services.AddScoped<IEmailSenderService, SmtpEmailSenderService>();
+builder.Services.AddHostedService<EmailOutboxWorker>();
+
 //builder.Services.AddSingleton<IContactRepository, InMemoryContactRepository>();
 builder.Services.AddDbContext<AgendaDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));

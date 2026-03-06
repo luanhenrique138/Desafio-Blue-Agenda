@@ -68,7 +68,7 @@ namespace Agenda.Infrastructure.Persistence
                 entity.Property(x => x.Status)
                     .HasConversion<int>()
                     .IsRequired()
-                    .HasDefaultValue(EmailStatus.Pending);
+                    .HasDefaultValue(EmailStatus.Pending.ToString());
 
                 entity.Property(x => x.Attempts)
                     .IsRequired()

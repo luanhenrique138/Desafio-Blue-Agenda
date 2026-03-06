@@ -16,7 +16,13 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
-
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: agenda-mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # UI
   api:
     build:
       context: ../backend
